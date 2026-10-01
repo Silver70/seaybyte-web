@@ -1,0 +1,51 @@
+---
+const lines = [
+	{ text: 'We’re here to build', size: 'minor' },
+	{ text: 'Better ways', size: 'major' },
+	{ text: 'of doing things.', size: 'minor' },
+] as const;
+---
+
+<section
+	id="about"
+	class="relative z-10 scroll-mt-20 overflow-hidden bg-section"
+	aria-labelledby="about-heading"
+>
+	<div class="relative z-10 mx-auto max-w-5xl px-4 pt-24 text-center sm:px-6 sm:pt-32 lg:px-8">
+		<h2 id="about-heading" class="font-bold uppercase">
+			{
+				lines.map((line) => (
+					<span
+						class:list={[
+							'block',
+							line.size === 'major'
+								? 'py-1 text-[clamp(3rem,11vw,7.5rem)] leading-[0.95] font-bold tracking-[-0.03em] text-brand-navy'
+								: 'text-2xl leading-tight font-medium tracking-[-0.01em] text-ink sm:text-4xl lg:text-5xl',
+						]}
+					>
+						{line.text}
+					</span>
+				))
+			}
+		</h2>
+
+		<p class="mx-auto mt-6 max-w-md text-base leading-relaxed text-muted sm:mt-8 sm:text-lg">
+			Technology, design and practical thinking brought together to solve real business problems.
+		</p>
+	</div>
+
+	<!-- Transparent-topped team illustration, capped in width; pulled up so its empty sky sits behind the copy. Cropped at the sides on mobile -->
+	<div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+		<div class="relative left-1/2 -mt-[10%] aspect-[1692/930] w-[150%] -translate-x-1/2 sm:-mt-[11%] sm:w-full">
+			<img
+				src="/abouthero.png"
+				alt="The Seabyte team collaborating around a laptop, surrounded by examples of websites, dashboards and apps they build"
+				width="1692"
+				height="930"
+				loading="lazy"
+				decoding="async"
+				class="absolute inset-0 h-full w-full"
+			/>
+		</div>
+	</div>
+</section>

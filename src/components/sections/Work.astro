@@ -1,0 +1,328 @@
+---
+import { Image } from 'astro:assets';
+import client1 from '../../assets/work/client1.png';
+import client2 from '../../assets/work/client2.png';
+
+// Placeholder projects to exercise the slider — replace with real client work
+const projects = [
+	{
+		name: 'Emberpay',
+		description: 'A bold landing page for a digital payments startup, built to explain the product fast and convert visitors into sign-ups.',
+		image: client1,
+		url: '#',
+	},
+	{
+		name: 'Busien',
+		description: 'A clean, editorial website for a growth consultancy that puts their strategy and results front and centre.',
+		image: client2,
+		url: '#',
+	},
+	{
+		name: 'Coralline Resorts',
+		description: 'A booking-focused resort website that showcases each property and makes reserving a stay effortless.',
+		image: client1,
+		url: '#',
+	},
+	{
+		name: 'Tidewell Health',
+		description: 'A patient portal redesign that simplifies appointments, records and messaging for a regional clinic group.',
+		image: client2,
+		url: '#',
+	},
+];
+
+// The loop needs spare slides off-screen so a slide never jumps ends while visible (see `go` in the script);
+// short project lists are repeated to reach that, with the copies hidden from assistive tech
+const minSlides = Math.max(5, 2 * Math.floor(projects.length / 2) + 3);
+const copies = Math.ceil(minSlides / projects.length);
+const slides = Array.from({ length: copies }, () => projects).flat();
+
+// Offset of slide i from the active one, wrapped into (-m/2, m/2] — mirrored in the script
+const offsetOf = (i: number, active: number, m: number) => {
+	const off = (((i - active) % m) + m) % m;
+	return off > m / 2 ? off - m : off;
+};
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section
+	id="work"
+	class="relative z-10 overflow-hidden bg-section-alt py-24 text-ink sm:py-32"
+	aria-labelledby="work-heading"
+>
+	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+		<h2 id="work-heading" class="text-3xl leading-tight font-bold tracking-tight text-ink sm:text-4xl lg:text-5xl">
+			Projects we’re proud of
+		</h2>
+	</div>
+
+	<div
+		data-carousel
+		data-count={projects.length}
+		class="mt-12 [--gap:0.75rem] [--slide-w:84vw] sm:mt-16 sm:[--gap:1.5rem] sm:[--slide-w:78vw] xl:[--slide-w:72rem]"
+		aria-roledescription="carousel"
+		aria-label="Client projects"
+	>
+		<div data-track class="relative h-[calc(var(--slide-w)*3/4)] touch-pan-y select-none sm:h-[calc(var(--slide-w)*9/16)]">
+			{
+				slides.map((project, i) => {
+					const isCopy = i >= projects.length;
+					return (
+						<div
+							data-slide
+							data-active={i === 0 ? '' : undefined}
+							style={`--offset: ${offsetOf(i, 0, slides.length)}`}
+							class="slide absolute top-0 left-1/2 h-full w-(--slide-w) scale-90 overflow-hidden rounded-3xl bg-white shadow-slide data-active:scale-100"
+							role={isCopy ? undefined : 'group'}
+							aria-roledescription={isCopy ? undefined : 'slide'}
+							aria-label={isCopy ? undefined : `${i + 1} of ${projects.length}: ${project.name}`}
+							aria-hidden={i === 0 ? undefined : 'true'}
+						>
+							<Image
+								src={project.image}
+								alt={`${project.name} website`}
+								widths={[640, 1024, 1470]}
+								sizes="(min-width: 1280px) 72rem, (min-width: 640px) 78vw, 84vw"
+								draggable="false"
+								class="h-full w-full object-cover object-top"
+							/>
+						</div>
+					);
+				})
+			}
+		</div>
+
+		<div class="mx-auto mt-10 max-w-4xl px-4 sm:px-6 lg:px-8">
+			<!-- Every project's details share one grid cell and crossfade, so the row keeps the tallest one's height -->
+			<div class="grid">
+				{
+					projects.map((project, i) => (
+						<div
+							data-info
+							data-active={i === 0 ? '' : undefined}
+							class="invisible flex items-center gap-5 opacity-0 transition-[opacity,visibility] duration-500 [grid-area:1/1] data-active:visible data-active:opacity-100 sm:gap-8 motion-reduce:transition-none"
+						>
+							<div class="hidden size-24 shrink-0 place-items-center rounded-2xl border border-brand-navy/10 bg-white sm:grid md:size-28">
+								<span class="px-3 text-center text-xs font-semibold tracking-[0.25em] text-ink uppercase">
+									{project.name.split(' ')[0]}
+								</span>
+							</div>
+
+							<div class="min-w-0 flex-1">
+								<h3 class="text-xl font-semibold text-ink sm:text-2xl">{project.name}</h3>
+								<p class="mt-2 max-w-lg leading-relaxed text-muted">{project.description}</p>
+							</div>
+
+							<a
+								href={project.url}
+								class="grid size-14 shrink-0 place-items-center rounded-full bg-brand-navy/6 text-ink transition-colors duration-200 hover:bg-brand-navy-dark hover:text-white sm:size-18"
+								aria-label={`View ${project.name} project`}
+							>
+								<svg
+									class="size-5 sm:size-6"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.75"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true"
+								>
+									<path d="M7 17 17 7M8 7h9v9" />
+								</svg>
+							</a>
+						</div>
+					))
+				}
+			</div>
+
+			<div class="mt-12 flex items-center justify-center gap-6 sm:gap-8">
+				<p class="font-mono text-sm font-medium tabular-nums text-ink" aria-hidden="true">
+					<span data-current>{pad(1)}</span>
+					<span class="mx-1.5 text-brand-navy/30">/</span>
+					<span class="text-muted">{pad(projects.length)}</span>
+				</p>
+
+				<div class="flex items-center gap-1">
+					{
+						projects.map((project, i) => (
+							<button
+								type="button"
+								data-dot
+								data-active={i === 0 ? '' : undefined}
+								class="group cursor-pointer px-1 py-3"
+								aria-label={`Show project ${i + 1}: ${project.name}`}
+								aria-current={i === 0 ? 'true' : undefined}
+							>
+								<span class="relative block h-1 w-9 overflow-hidden rounded-full bg-brand-navy/15 transition-colors group-hover:bg-brand-navy/25">
+									<span data-fill class="fill absolute inset-0 origin-left scale-x-0 rounded-full bg-brand-navy-dark" />
+								</span>
+							</button>
+						))
+					}
+				</div>
+
+				<button
+					type="button"
+					data-autoplay-toggle
+					class="grid size-11 cursor-pointer place-items-center rounded-full border border-brand-navy/20 text-ink transition-colors hover:border-brand-navy/40 hover:bg-brand-navy/5"
+					aria-label="Pause autoplay"
+				>
+					<svg class="size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+						<path d="M4 3h3v10H4zM9 3h3v10H9z" data-icon-pause />
+						<path d="M5 3l8 5-8 5z" class="hidden" data-icon-play />
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	/* Slides sit side by side, each shifted by its --offset from the active one; side slides are scaled down */
+	.slide {
+		translate: calc(-50% + var(--offset) * (var(--slide-w) + var(--gap))) 0;
+		transition:
+			translate 700ms var(--ease-out),
+			scale 700ms var(--ease-out);
+	}
+
+	/* The active dot fills over the autoplay interval; when it finishes the script advances */
+	[data-active] > span > .fill {
+		animation: work-progress 6s linear forwards;
+	}
+
+	[data-paused] .fill {
+		animation-play-state: paused;
+	}
+
+	@keyframes work-progress {
+		to {
+			scale: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.slide {
+			transition: none;
+		}
+
+		[data-active] > span > .fill {
+			animation: none;
+			scale: 1;
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+		const n = Number(root.dataset.count);
+		const track = root.querySelector<HTMLElement>('[data-track]');
+		const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+		const infos = [...root.querySelectorAll<HTMLElement>('[data-info]')];
+		const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-dot]')];
+		const current = root.querySelector<HTMLElement>('[data-current]');
+		const m = slides.length;
+		if (!track || n < 2) return;
+
+		let active = 0; // index into slides (which may include copies); the project is active % n
+
+		function offsetOf(i: number, a: number) {
+			const off = (((i - a) % m) + m) % m;
+			return off > m / 2 ? off - m : off;
+		}
+
+		// Move by `step` slides; any slide that wraps from one end to the other does so off-screen, without a transition
+		function go(step: number) {
+			if (!step) return;
+			const next = (((active + step) % m) + m) % m;
+			slides.forEach((slide, i) => {
+				const from = offsetOf(i, active);
+				const to = offsetOf(i, next);
+				const wraps = to !== from - step;
+				if (wraps) slide.style.transition = 'none';
+				slide.style.setProperty('--offset', String(to));
+				slide.toggleAttribute('data-active', to === 0);
+				to === 0 ? slide.removeAttribute('aria-hidden') : slide.setAttribute('aria-hidden', 'true');
+				if (wraps) {
+					void slide.offsetWidth;
+					slide.style.transition = '';
+				}
+			});
+			active = next;
+
+			const project = active % n;
+			infos.forEach((info, i) => info.toggleAttribute('data-active', i === project));
+			dots.forEach((dot, i) => {
+				dot.toggleAttribute('data-active', i === project);
+				i === project ? dot.setAttribute('aria-current', 'true') : dot.removeAttribute('aria-current');
+			});
+			if (current) current.textContent = String(project + 1).padStart(2, '0');
+		}
+
+		// Shortest way round to a project, so a dot click never scrolls further than half the list
+		function goToProject(project: number) {
+			let delta = (((project - (active % n)) % n) + n) % n;
+			if (delta > n / 2) delta -= n;
+			go(delta);
+		}
+
+		// Autoplay is driven by the active dot's fill animation; pausing freezes that animation
+		const pauseReasons = new Set<string>();
+		function setPaused(reason: string, paused: boolean) {
+			paused ? pauseReasons.add(reason) : pauseReasons.delete(reason);
+			root.toggleAttribute('data-paused', pauseReasons.size > 0);
+		}
+
+		dots.forEach((dot, i) => {
+			dot.addEventListener('click', () => goToProject(i));
+			dot.querySelector('[data-fill]')?.addEventListener('animationend', () => {
+				if (dot.hasAttribute('data-active')) go(1);
+			});
+		});
+
+		// Visible pause control (WCAG 2.2.2) — also the only way to stop it on touch screens
+		const toggle = root.querySelector<HTMLButtonElement>('[data-autoplay-toggle]');
+		toggle?.addEventListener('click', () => {
+			const paused = !pauseReasons.has('user');
+			setPaused('user', paused);
+			toggle.setAttribute('aria-label', paused ? 'Play autoplay' : 'Pause autoplay');
+			toggle.querySelector('[data-icon-pause]')?.classList.toggle('hidden', paused);
+			toggle.querySelector('[data-icon-play]')?.classList.toggle('hidden', !paused);
+		});
+
+		// Hover and keyboard focus pause it; touch taps don't, as they'd leave it paused with no way to "leave"
+		root.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && setPaused('hover', true));
+		root.addEventListener('pointerleave', () => setPaused('hover', false));
+		root.addEventListener('focusin', (e) => {
+			if ((e.target as Element).matches(':focus-visible')) setPaused('focus', true);
+		});
+		root.addEventListener('focusout', (e) => {
+			if (!root.contains(e.relatedTarget as Node)) setPaused('focus', false);
+		});
+		document.addEventListener('visibilitychange', () => setPaused('hidden', document.hidden));
+		new IntersectionObserver(([entry]) => setPaused('offscreen', !entry.isIntersecting)).observe(root);
+
+		// Clicking a peeking side slide brings it to the centre
+		slides.forEach((slide) => {
+			slide.addEventListener('click', () => {
+				const off = Number(slide.style.getPropertyValue('--offset'));
+				if (Math.abs(off) === 1) go(off);
+			});
+		});
+
+		// Horizontal swipe on touch screens
+		let startX: number | null = null;
+		track.addEventListener('pointerdown', (e) => {
+			if (e.pointerType !== 'mouse') startX = e.clientX;
+		});
+		track.addEventListener('pointerup', (e) => {
+			if (startX === null) return;
+			const dx = e.clientX - startX;
+			startX = null;
+			if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+		});
+		track.addEventListener('pointercancel', () => (startX = null));
+	});
+</script>

@@ -1,0 +1,133 @@
+---
+// Transparent so it sits on whatever background its parent provides (currently the Contact panel)
+const email = 'hello@seabyte.mv';
+const phone = '+960 730 1234';
+const location = 'Malé, Maldives';
+
+// 24×24 stroke icon paths
+const icons = {
+	phone: 'M5 4h3.5l2 5-2.5 1.5a11 11 0 0 0 5.5 5.5L15 13.5l5 2V19a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z',
+	pin: 'M12 21s-7-6.2-7-12a7 7 0 1 1 14 0c0 5.8-7 12-7 12ZM14.5 9a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z',
+	instagram: 'M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4ZM15.5 12a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM17 7h.01',
+	linkedin: 'M7 10v7M7 7h.01M11 17v-7M11 13.5a3 3 0 0 1 6 0V17',
+	x: 'M4 4h4.5L20 20h-4.5ZM19.5 4l-6.3 7M4.5 20l6.3-7',
+};
+
+const contactItems = [
+	{ icon: icons.phone, label: phone, href: `tel:${phone.replace(/\s/g, '')}` },
+	{ icon: icons.pin, label: location },
+];
+
+// Fill in the profile URLs once the accounts are live; entries left as '' aren't rendered
+const socials = [
+	{ label: 'Instagram', icon: icons.instagram, href: '' },
+	{ label: 'LinkedIn', icon: icons.linkedin, href: '' },
+	{ label: 'X', icon: icons.x, href: '' },
+];
+
+const links = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Services', href: '/#services' },
+	{ label: 'Work', href: '/#work' },
+	{ label: 'About', href: '/#about' },
+	{ label: 'Contact', href: '/#contact' },
+];
+
+// Legal pages: set an href when the page exists; entries left as '' aren't rendered
+const legal = [
+	{ label: 'Privacy Policy', href: '' },
+	{ label: 'Terms of Service', href: '' },
+];
+
+const liveSocials = socials.filter((social) => social.href);
+const liveLegal = legal.filter((item) => item.href);
+
+const year = new Date().getFullYear();
+---
+
+<footer class="relative">
+	<div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+		<div class="grid gap-12 border-t border-brand-navy/10 pt-12 sm:grid-cols-[minmax(0,1fr)_auto] sm:pt-14">
+			<div>
+				<!-- The email is the footer's headline: it's the one thing people come down here for -->
+				<p class="text-sm text-muted">Prefer email?</p>
+				<a
+					href={`mailto:${email}`}
+					class="mt-2 inline-block font-display text-2xl font-semibold tracking-tight whitespace-nowrap text-ink underline decoration-brand-cyan-dark/40 decoration-2 underline-offset-8 transition-colors hover:text-brand-cyan-dark hover:decoration-brand-cyan-dark sm:text-4xl"
+				>
+					{email}
+				</a>
+
+				<ul class="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-8">
+					{
+						contactItems.map((item) => (
+							<li class="flex items-center gap-3">
+								<svg class="size-5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d={item.icon} />
+								</svg>
+								{item.href ? (
+									<a href={item.href} class="text-[0.9375rem] font-medium whitespace-nowrap text-ink transition-colors hover:text-brand-cyan-dark">
+										{item.label}
+									</a>
+								) : (
+									<span class="text-[0.9375rem] text-muted">{item.label}</span>
+								)}
+							</li>
+						))
+					}
+				</ul>
+
+				{
+					liveSocials.length > 0 && (
+						<ul class="mt-8 flex gap-3">
+							{liveSocials.map((social) => (
+								<li>
+									<a
+										href={social.href}
+										class="grid size-11 place-items-center rounded-full border border-brand-navy/15 text-ink transition-colors hover:border-brand-navy-dark hover:bg-brand-navy-dark hover:text-white"
+										aria-label={social.label}
+									>
+										<svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+											<path d={social.icon} />
+										</svg>
+									</a>
+								</li>
+							))}
+						</ul>
+					)
+				}
+			</div>
+
+			<nav aria-label="Footer">
+				<ul class="flex flex-wrap gap-x-6 gap-y-3 sm:flex-col">
+					{
+						links.map((link) => (
+							<li>
+								<a href={link.href} class="text-[0.9375rem] font-medium whitespace-nowrap text-ink transition-colors hover:text-brand-cyan-dark">
+									{link.label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+		</div>
+
+		<div
+			class="mt-16 flex flex-col gap-3 border-t border-brand-navy/10 py-8 text-xs text-muted sm:mt-20 sm:flex-row sm:items-center sm:justify-between"
+		>
+			<p>© {year} Seabyte</p>
+			{
+				liveLegal.length > 0 && (
+					<p class="flex gap-4">
+						{liveLegal.map((item) => (
+							<a href={item.href} class="transition-colors hover:text-ink">
+								{item.label}
+							</a>
+						))}
+					</p>
+				)
+			}
+		</div>
+	</div>
+</footer>

@@ -1,0 +1,264 @@
+---
+import { Image } from 'astro:assets';
+import background from '../../assets/contact/footer-bg.png';
+import Button from '../ui/Button.astro';
+import Footer from '../Footer.astro';
+
+// Where the form POSTs its data. Empty until a form backend (e.g. an Astro action or a form service) is set up.
+const formEndpoint = '';
+
+// 24×24 stroke icon paths
+const icons = {
+	user: 'M20 21v-1a5 5 0 0 0-5-5H9a5 5 0 0 0-5 5v1M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+	mail: 'M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5ZM3.5 6.5 12 13l8.5-6.5',
+	building: 'M5 21V4a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v17M16 9h3a1 1 0 0 1 1 1v11M3 21h18M9 7h3M9 11h3M9 15h3',
+	monitor: 'M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1ZM8 20h8M12 16v4',
+	palette:
+		'M12 3a9 9 0 1 0 0 18c.9 0 1.5-.7 1.5-1.5 0-.4-.2-.8-.4-1.1-.3-.3-.4-.6-.4-1 0-.8.7-1.5 1.5-1.5H16a5 5 0 0 0 5-5c0-4.4-4-7.9-9-7.9ZM7.5 12.5h.01M9.5 8h.01M14.5 8h.01M17 11.5h.01',
+	bulb: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3Z',
+	wrench: 'M14.7 6.3a4 4 0 0 0-5.3 5.3L3 18l3 3 6.4-6.4a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.3-.7-.7-2.3Z',
+	network: 'M9 3h6v5H9ZM2 16h6v5H2ZM16 16h6v5h-6ZM12 8v4M5 16v-4h14v4',
+	dots: 'M5 12h.01M12 12h.01M19 12h.01',
+	message: 'M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H9l-5 4Z',
+	users: 'M16 20v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM22 20v-1a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+	bolt: 'M13 2 4 14h7l-1 8 9-12h-7l1-8Z',
+};
+
+const highlights = [
+	{ icon: icons.message, title: 'Quick response', text: 'We usually reply within one business day.' },
+	{ icon: icons.users, title: 'Tailored approach', text: 'Every project is scoped to your goals.' },
+	{ icon: icons.bolt, title: 'From idea to launch', text: 'Strategy, design and development — all in one team.' },
+];
+
+const textFields = [
+	{ name: 'name', label: 'Your name', type: 'text', placeholder: 'Aishath Rasheed', icon: icons.user, autocomplete: 'name', required: true },
+	{ name: 'email', label: 'Email address', type: 'email', placeholder: 'you@company.com', icon: icons.mail, autocomplete: 'email', required: true },
+	{ name: 'company', label: 'Company / brand', type: 'text', placeholder: 'Your company', icon: icons.building, autocomplete: 'organization', required: false },
+] as const;
+
+const serviceOptions = [
+	{ label: 'Website / Web App', icon: icons.monitor },
+	{ label: 'UI/UX Design', icon: icons.palette },
+	{ label: 'IT Consulting', icon: icons.bulb },
+	{ label: 'PC Troubleshooting', icon: icons.wrench },
+	{ label: 'Networking & IT', icon: icons.network },
+	{ label: 'Other', icon: icons.dots },
+];
+
+const budgetOptions = ['Under MVR 10k', 'MVR 10k – 25k', 'MVR 25k – 50k', 'MVR 50k+', 'Not sure yet'];
+
+const inputClasses =
+	'w-full rounded-xl border border-brand-navy/10 bg-white/60 backdrop-blur-sm text-[0.9375rem] text-ink transition placeholder:text-muted focus:border-brand-cyan-dark focus:bg-white';
+
+const chipClasses =
+	'flex cursor-pointer items-center rounded-xl border border-brand-navy/10 bg-white/55 text-sm font-medium backdrop-blur-sm text-ink transition-colors hover:border-brand-navy/25 has-checked:border-brand-cyan-dark/40 has-checked:bg-brand-cyan/10 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--color-focus)';
+---
+
+<!-- The contact form and the site footer share this background.
+     On lg+ the panel is much taller than the 16:9 artwork, so rather than cropping its glass-edged sides with object-cover,
+     the image sits full-width at the bottom and fades into a gradient sampled from its top edge. -->
+<div
+	class="relative z-10 overflow-hidden bg-surface lg:bg-[linear-gradient(to_right,var(--color-mist-edge),var(--color-mist-mid)_35%,var(--color-mist-mid)_65%,var(--color-mist-edge-2))]"
+>
+	<Image
+		src={background}
+		alt=""
+		widths={[768, 1280, 1672]}
+		sizes="100vw"
+		class="absolute inset-x-0 bottom-0 h-full w-full object-cover lg:h-auto lg:[mask-image:linear-gradient(to_bottom,transparent,black_30%)]"
+	/>
+	<!-- White wash so text reads cleanly while the glass artwork stays vivid in the corners:
+	     an even wash when stacked; on lg+ glows behind the intro, the form and the footer centre -->
+	<div
+		class="absolute inset-0 bg-white/60 lg:bg-transparent lg:[--w:var(--color-white)] lg:bg-[radial-gradient(ellipse_40%_40%_at_25%_22%,color-mix(in_oklab,var(--w)_90%,transparent),color-mix(in_oklab,var(--w)_50%,transparent)_50%,transparent_80%),radial-gradient(ellipse_45%_45%_at_65%_28%,color-mix(in_oklab,var(--w)_85%,transparent),color-mix(in_oklab,var(--w)_50%,transparent)_55%,transparent_85%),radial-gradient(ellipse_45%_35%_at_50%_85%,color-mix(in_oklab,var(--w)_75%,transparent),color-mix(in_oklab,var(--w)_35%,transparent)_55%,transparent_85%)]"
+		aria-hidden="true"
+	></div>
+
+	<section id="contact" class="relative scroll-mt-20" aria-labelledby="contact-heading">
+		<div
+			class="mx-auto grid max-w-7xl gap-14 px-4 pt-24 pb-20 sm:px-6 sm:pt-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-12 lg:px-8 xl:gap-16"
+		>
+			<div>
+				<h2
+					id="contact-heading"
+					class="text-5xl leading-[1.05] font-semibold tracking-tight text-ink sm:text-6xl lg:text-5xl xl:text-6xl"
+				>
+					Have something <span class="sm:block">in <span class="text-brand-cyan-dark">mind?</span></span>
+				</h2>
+				<p class="mt-6 max-w-md text-base leading-relaxed text-muted sm:text-lg">
+					Tell us a little about your project. We’ll figure out the best way to bring it to life.
+				</p>
+
+				<ul class="mt-12 space-y-6">
+					{
+						highlights.map((item) => (
+							<li class="flex items-center gap-5">
+								<span class="grid size-12 shrink-0 place-items-center rounded-xl bg-white/70 text-brand-navy backdrop-blur-sm">
+									<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<path d={item.icon} />
+									</svg>
+								</span>
+								<div>
+									<p class="font-sans text-[0.9375rem] font-semibold text-ink">{item.title}</p>
+									<p class="mt-0.5 text-sm text-muted">{item.text}</p>
+								</div>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+
+			<form data-contact-form data-endpoint={formEndpoint} method="post" action={formEndpoint || undefined} class="space-y-7">
+				<div class="grid gap-5 sm:grid-cols-2">
+					{
+						textFields.map((field) => (
+							<div class:list={[field.name === 'company' && 'sm:col-span-2']}>
+								<label for={`contact-${field.name}`} class="text-sm font-semibold text-ink">
+									{field.label}
+									{!field.required && <span class="font-normal text-muted"> (optional)</span>}
+								</label>
+								<div class="relative mt-2">
+									<svg class="pointer-events-none absolute top-1/2 left-4 size-4.5 -translate-y-1/2 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<path d={field.icon} />
+									</svg>
+									<input
+										id={`contact-${field.name}`}
+										name={field.name}
+										type={field.type}
+										placeholder={field.placeholder}
+										autocomplete={field.autocomplete}
+										required={field.required}
+										class:list={[inputClasses, 'h-12 pr-4 pl-11']}
+									/>
+								</div>
+							</div>
+						))
+					}
+				</div>
+
+				<fieldset>
+					<legend class="text-sm font-semibold text-ink">What can we help with?</legend>
+					<p class="mt-1 text-sm text-muted">Select all that apply.</p>
+					<div class="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+						{
+							serviceOptions.map((option) => (
+								<label class:list={[chipClasses, 'h-13 gap-3 px-4']}>
+									<input type="checkbox" name="services" value={option.label} class="sr-only" />
+									<svg class="size-5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<path d={option.icon} />
+									</svg>
+									{option.label}
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+
+				<fieldset>
+					<legend class="text-sm font-semibold text-ink">
+						Budget <span class="font-normal text-muted">(optional)</span>
+					</legend>
+					<div class="mt-4 flex flex-wrap gap-2.5">
+						{
+							budgetOptions.map((option) => (
+								<label class:list={[chipClasses, 'h-11 px-4']}>
+									<input type="radio" name="budget" value={option} class="sr-only" />
+									{option}
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+
+				<div>
+					<label for="contact-message" class="text-sm font-semibold text-ink">Tell us about your project</label>
+					<p id="contact-message-hint" class="mt-1 text-sm text-muted">What are you looking to build, improve, or solve?</p>
+					<div class="relative mt-3">
+						<svg class="pointer-events-none absolute top-4 left-4 size-4.5 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d={icons.message} />
+						</svg>
+						<textarea
+							id="contact-message"
+							name="message"
+							rows="4"
+							required
+							aria-describedby="contact-message-hint"
+							placeholder="Share a few details about your goals, ideas or challenges…"
+							class:list={[inputClasses, 'block min-h-32 resize-y py-3.5 pr-4 pl-11']}
+						></textarea>
+					</div>
+				</div>
+
+				<!-- Centred submit; on lg+ thin cyan connectors run from beside the columns down to it -->
+				<div class="pt-4">
+					<div class="flex items-center justify-center lg:-mx-6 xl:-mx-10">
+						<span class="relative hidden flex-1 self-stretch lg:block" aria-hidden="true">
+							<span class="absolute right-4 bottom-1/2 left-0 h-28 rounded-bl-[2.5rem] border-b border-l border-brand-cyan/60"></span>
+							<span class="absolute top-1/2 right-3 size-1.5 -translate-y-1/2 rounded-full bg-brand-cyan"></span>
+						</span>
+						<Button
+							text="Start a project"
+							type="submit"
+							arrow
+							class="w-full px-14 sm:w-auto"
+						/>
+						<span class="relative hidden flex-1 self-stretch lg:block" aria-hidden="true">
+							<span class="absolute right-0 bottom-1/2 left-4 h-28 rounded-br-[2.5rem] border-r border-b border-brand-cyan/60"></span>
+							<span class="absolute top-1/2 left-3 size-1.5 -translate-y-1/2 rounded-full bg-brand-cyan"></span>
+						</span>
+					</div>
+					<p data-form-status class="mt-4 hidden text-center text-sm" role="status" aria-live="polite"></p>
+				</div>
+			</form>
+		</div>
+	</section>
+
+	<Footer />
+</div>
+
+<script>
+	document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
+		const status = form.querySelector<HTMLElement>('[data-form-status]');
+		const submit = form.querySelector<HTMLButtonElement>('[type="submit"]');
+		const submitLabel = submit?.querySelector('[data-button-label]');
+		const idleLabel = submitLabel?.textContent ?? '';
+
+		function setSending(sending: boolean) {
+			if (!submit) return;
+			submit.disabled = sending;
+			sending ? (submit.dataset.state = 'loading') : delete submit.dataset.state;
+			submit.setAttribute('aria-busy', String(sending));
+			if (submitLabel) submitLabel.textContent = sending ? 'Sending…' : idleLabel;
+		}
+
+		function showStatus(message: string, tone: 'success' | 'error') {
+			if (!status) return;
+			status.textContent = message;
+			status.classList.remove('hidden', 'text-danger', 'text-brand-cyan-dark');
+			status.classList.add(tone === 'success' ? 'text-brand-cyan-dark' : 'text-danger');
+		}
+
+		form.addEventListener('submit', async (e) => {
+			// Native validation runs before this fires, so the fields are already valid here
+			e.preventDefault();
+
+			const endpoint = form.dataset.endpoint;
+			if (!endpoint) {
+				showStatus('The form isn’t connected yet — please email us directly for now.', 'error');
+				return;
+			}
+
+			setSending(true);
+			try {
+				const res = await fetch(endpoint, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+				if (!res.ok) throw new Error(String(res.status));
+				form.reset();
+				showStatus('Thanks! We’ll be in touch within one business day.', 'success');
+			} catch {
+				showStatus('Something went wrong sending your message. Please try again or email us.', 'error');
+			} finally {
+				setSending(false);
+			}
+		});
+	});
+</script>

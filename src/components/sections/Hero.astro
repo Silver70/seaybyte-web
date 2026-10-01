@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import Button from '../ui/Button.astro';
+import heroWaves from '../../assets/hero-waves.png';
+---
+
+<!-- Sticky so the next section slides up over it; the script pins it by its bottom edge -->
+<section
+	data-hero
+	class="sticky top-0 z-0 overflow-hidden bg-section"
+>
+	<div class="relative z-10 mx-auto max-w-6xl px-4 pt-36 text-center sm:px-6 md:pt-48 lg:px-8">
+		<h1
+			class="text-[2.75rem] leading-[1.02] font-bold tracking-[-0.022em] text-ink sm:text-6xl lg:text-7xl xl:text-[5.5rem]"
+		>
+			<span class="sm:block">Digital Solutions</span>{' '}That{' '}
+			<span class="text-brand-cyan-dark">Move You Forward</span>
+		</h1>
+
+		<p class="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+			We help businesses plan, build, and support the technology they need — from websites and applications to IT
+			consulting, design, and network solutions.
+		</p>
+
+		<div class="mt-9 flex justify-center">
+			<Button text="Book a call" href="#contact" arrow />
+		</div>
+	</div>
+
+	<!-- Transparent-topped wave illustration; pulled up so its empty sky sits behind the copy. Cropped at the sides on mobile -->
+	<div class="relative left-1/2 -mt-[30%] aspect-[1672/941] w-[180%] -translate-x-1/2 sm:-mt-[24%] sm:w-full">
+		<Image
+			src={heroWaves}
+			alt=""
+			widths={[828, 1280, 1672]}
+			sizes="(min-width: 640px) 100vw, 180vw"
+			loading="eager"
+			fetchpriority="high"
+			class="absolute inset-0 h-full w-full"
+		/>
+	</div>
+</section>
+
+<script>
+	const hero = document.querySelector<HTMLElement>('[data-hero]');
+
+	// Pin by the bottom edge so a hero taller than the viewport is fully scrolled through before it's covered
+	function layout() {
+		if (hero) hero.style.top = `${Math.min(0, window.innerHeight - hero.offsetHeight)}px`;
+	}
+
+	if (hero) {
+		new ResizeObserver(layout).observe(hero);
+		window.addEventListener('resize', layout);
+		layout();
+	}
+</script>

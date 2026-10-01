@@ -1,0 +1,201 @@
+---
+import { Image } from 'astro:assets';
+import troubleshootImage from '../../assets/services/troubleshoot.png';
+import webservice from "../../assets/services/wed-service.png"
+import abstractBg from '../../assets/services/abstract-bg.png';
+
+// Placeholder: every service uses the same image until the dedicated artwork is ready
+const services = [
+	{
+		id: 'web-development',
+		title: 'Web Development',
+		description:
+			'Fast, responsive websites and web applications built on modern tooling — designed to grow with your business and easy for your team to manage.',
+		tags: ['Business websites', 'Web applications', 'E-commerce', 'CMS integration'],
+		image: webservice,
+	},
+	{
+		id: 'ui-ux-design',
+		title: 'UI/UX Design',
+		description:
+			'Clear, intuitive interfaces grounded in how your users actually work — from early wireframes to polished, production-ready designs.',
+		tags: ['User research', 'Wireframes & prototypes', 'Visual design', 'Design systems'],
+		image: troubleshootImage,
+	},
+	{
+		id: 'it-consultation',
+		title: 'IT Consultation',
+		description:
+			'Practical advice on the technology decisions that matter — we help you plan infrastructure, choose the right tools, and avoid costly missteps.',
+		tags: ['Technology planning', 'Infrastructure review', 'Security guidance', 'Vendor selection'],
+		image: troubleshootImage,
+	},
+	{
+		id: 'pc-troubleshooting',
+		title: 'PC Troubleshooting',
+		description:
+			'Quick, reliable diagnosis and repair for slow, faulty, or misbehaving machines — so you and your team can get back to work.',
+		tags: ['Hardware diagnostics', 'Software issues', 'Virus removal', 'Upgrades & setup'],
+		image: troubleshootImage,
+	},
+];
+
+// One frame per distinct image, so services that share artwork don't crossfade to an identical copy
+const images = [...new Set(services.map((service) => service.image))];
+const imageIndex = services.map((service) => images.indexOf(service.image));
+---
+
+<!-- Raised panel that slides up over the pinned Hero -->
+<section
+	id="services"
+	class="relative z-10 scroll-mt-20 rounded-t-4xl bg-section-alt text-ink shadow-lift sm:rounded-t-[3rem]"
+>
+	<!-- On lg+ the wrapper is tall so the sticky panel stays pinned while each service gets its own stretch of scroll -->
+	<div data-services data-image-index={imageIndex.join(',')} class="relative lg:h-[calc(100vh+var(--steps)*60vh)]" style={`--steps: ${services.length}`}>
+		<div
+			data-services-sticky
+			class="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:sticky lg:top-20 lg:h-[calc(100vh-5rem)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-16 lg:py-0 lg:px-8"
+		>
+			<div>
+				<h2 class="text-3xl leading-tight font-bold tracking-tight text-ink sm:text-4xl lg:text-5xl">
+					Services built around your needs
+				</h2>
+
+				<ol class="mt-10 border-l border-brand-navy/15">
+					{
+						services.map((service, i) => (
+							<li data-service-item data-active={i === 0 ? '' : undefined} class="group relative">
+								<span
+									class="absolute top-0 -left-px h-full w-0.5 origin-top scale-y-0 bg-brand-cyan-dark transition-transform duration-500 group-data-active:scale-y-100 motion-reduce:transition-none"
+									aria-hidden="true"
+								/>
+
+								<h3>
+									<button
+										type="button"
+										id={`${service.id}-trigger`}
+										class="flex w-full cursor-pointer items-baseline gap-4 py-4 pl-6 text-left"
+										aria-expanded={i === 0 ? 'true' : 'false'}
+										aria-controls={`${service.id}-panel`}
+										data-service-trigger
+									>
+										<span class="font-mono text-xs font-medium tabular-nums text-muted transition-colors group-data-active:text-brand-cyan-dark">
+											{String(i + 1).padStart(2, '0')}
+										</span>
+										<span class="text-xl font-semibold text-muted transition-colors group-hover:text-ink group-data-active:text-ink sm:text-2xl">
+											{service.title}
+										</span>
+									</button>
+								</h3>
+
+								<div
+									id={`${service.id}-panel`}
+									role="region"
+									aria-labelledby={`${service.id}-trigger`}
+									class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-out group-data-active:grid-rows-[1fr] motion-reduce:transition-none"
+								>
+									<div class="min-h-0 overflow-hidden">
+										<div class="pb-6 pl-6 opacity-0 transition-opacity duration-500 group-data-active:opacity-100 sm:pl-13">
+											<p class="max-w-md leading-relaxed text-muted">{service.description}</p>
+											<ul class="mt-4 flex flex-wrap gap-2">
+												{service.tags.map((tag) => (
+													<li class="rounded-full border border-brand-navy/15 px-3 py-1 text-xs font-medium text-ink">
+														{tag}
+													</li>
+												))}
+											</ul>
+										</div>
+									</div>
+								</div>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+
+			<!-- Images are stacked and crossfaded over the abstract backdrop; on mobile the frame sits above the list (order-first) -->
+			<div class="relative order-first aspect-[722/490] overflow-hidden rounded-3xl lg:order-0">
+				<Image
+					src={abstractBg}
+					alt=""
+					widths={[640, 960, 1440]}
+					sizes="(min-width: 1024px) 50vw, 100vw"
+					class="absolute inset-0 h-full w-full object-cover"
+				/>
+				{
+					images.map((image, i) => (
+						<div
+							data-service-image
+							data-active={i === 0 ? '' : undefined}
+							class="absolute inset-4 scale-[1.03] sm:inset-8 opacity-0 transition duration-700 ease-out data-active:scale-100 data-active:opacity-100 motion-reduce:transition-none"
+						>
+							<Image
+								src={image}
+								alt=""
+								widths={[480, 722]}
+								sizes="(min-width: 1024px) 50vw, 100vw"
+								class="h-full w-full object-contain"
+							/>
+						</div>
+					))
+				}
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	const desktop = window.matchMedia('(min-width: 1024px)');
+
+	document.querySelectorAll<HTMLElement>('[data-services]').forEach((root) => {
+		const sticky = root.querySelector<HTMLElement>('[data-services-sticky]');
+		const items = [...root.querySelectorAll<HTMLElement>('[data-service-item]')];
+		const images = [...root.querySelectorAll<HTMLElement>('[data-service-image]')];
+		if (!sticky || !items.length) return;
+
+		let active = 0;
+
+		function setActive(index: number) {
+			if (index === active) return;
+			active = index;
+			items.forEach((item, i) => {
+				item.toggleAttribute('data-active', i === index);
+				item.querySelector('[data-service-trigger]')?.setAttribute('aria-expanded', String(i === index));
+			});
+			const imageIndex = (root.dataset.imageIndex ?? '').split(',').map(Number);
+			images.forEach((image, i) => image.toggleAttribute('data-active', i === (imageIndex[index] ?? index)));
+		}
+
+		// Distance the page scrolls while the panel is pinned, and where that pinning starts
+		function scrollRange() {
+			const stickyTop = parseFloat(getComputedStyle(sticky!).top) || 0;
+			const start = root.getBoundingClientRect().top + window.scrollY - stickyTop;
+			return { start, length: root.offsetHeight - sticky!.offsetHeight };
+		}
+
+		let ticking = false;
+		function onScroll() {
+			if (ticking || !desktop.matches) return;
+			ticking = true;
+			requestAnimationFrame(() => {
+				ticking = false;
+				const { start, length } = scrollRange();
+				const progress = Math.min(Math.max((window.scrollY - start) / length, 0), 1);
+				setActive(Math.min(Math.floor(progress * items.length), items.length - 1));
+			});
+		}
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+		desktop.addEventListener('change', onScroll);
+		onScroll();
+
+		// On desktop, clicking scrolls to that service's stretch; on mobile it's a plain accordion
+		items.forEach((item, i) => {
+			item.querySelector('[data-service-trigger]')?.addEventListener('click', () => {
+				if (!desktop.matches) return setActive(i);
+				const { start, length } = scrollRange();
+				window.scrollTo({ top: start + ((i + 0.5) / items.length) * length });
+			});
+		});
+	});
+</script>

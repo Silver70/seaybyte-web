@@ -1,0 +1,57 @@
+---
+interface Props {
+	text: string;
+	/** Renders an <a> when set, otherwise a <button>. */
+	href?: string;
+	variant?: 'primary' | 'outline';
+	size?: 'sm' | 'md';
+	arrow?: boolean;
+	type?: 'button' | 'submit' | 'reset';
+	class?: string;
+}
+
+const {
+	text,
+	href,
+	variant = 'primary',
+	size = 'md',
+	arrow = false,
+	type = 'button',
+	class: className,
+} = Astro.props;
+
+// States: hover · focus-visible (global ring) · active · disabled · loading (data-state="loading", label swapped by the caller)
+const classes = [
+	'group inline-flex items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap transition-[background-color,border-color,translate] duration-200 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-55 data-[state=loading]:cursor-progress',
+	{
+		'bg-brand-navy-dark text-white hover:bg-brand-navy disabled:hover:bg-brand-navy-dark': variant === 'primary',
+		'border border-brand-navy/25 bg-transparent text-ink hover:border-brand-navy hover:bg-brand-navy/5':
+			variant === 'outline',
+		'h-10 px-5 text-sm': size === 'sm',
+		'h-13 px-7 text-[0.9375rem]': size === 'md',
+	},
+	className,
+];
+
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag href={href} type={href ? undefined : type} class:list={classes}>
+	<span data-button-label>{text}</span>
+	{
+		arrow && (
+			<svg
+				class="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-disabled:translate-x-0 group-data-[state=loading]:hidden"
+				viewBox="0 0 16 16"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.75"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="M3 8h10M9 4l4 4-4 4" />
+			</svg>
+		)
+	}
+</Tag>

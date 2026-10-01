@@ -1,0 +1,107 @@
+/* Hallmark · redesign (fix pass, layout kept from context/ comps) · genre: modern-minimal · tone: technical · anchor hue: cyan 202°
+ * type: Instrument Sans (headlines, UI and body) + JetBrains Mono (numerals) · mood: approachable
+ * nav: N5 floating pill · footer: Ft5 statement (contact-led)
+ * pre-emit critique: P4 H4 E4 S4 R4 V3
+ */
+@import "tailwindcss";
+
+@theme {
+    /* Brand colours, sampled from the Seabyte logo */
+    --color-brand-navy: oklch(30.1% 0.097 255);
+    --color-brand-navy-dark: oklch(19.8% 0.062 283);
+    --color-brand-cyan: oklch(78% 0.133 202);
+    /* Darker cyan with enough contrast to use as text on light backgrounds */
+    --color-brand-cyan-dark: oklch(55% 0.094 209);
+
+    /* Neutrals, all tinted towards the navy hue */
+    --color-surface: oklch(98% 0.003 68); /* matches the hero illustration's backdrop */
+    --color-surface-cool: oklch(98.1% 0.003 248);
+    --color-surface-cool-2: oklch(96.2% 0.009 248);
+    --color-surface-cool-3: oklch(94.1% 0.011 252);
+
+    /* Section backgrounds: page sections alternate between these two */
+    --color-section: #f7f8f7;
+    --color-section-alt: #eef1f2;
+    --color-ink: oklch(20% 0.04 258);
+    --color-muted: oklch(47.2% 0.027 258);
+    --color-white: oklch(99.2% 0.003 248);
+    --color-black: oklch(14% 0.02 270);
+
+    /* Sky tints sampled from the contact artwork's top edge */
+    --color-mist-edge: oklch(93.5% 0.029 245);
+    --color-mist-mid: oklch(99% 0.003 229);
+    --color-mist-edge-2: oklch(89.7% 0.046 244);
+
+    --color-danger: oklch(52% 0.19 27);
+
+    /* Focus ring: cyan-dark clears 3:1 on light surfaces; dark sections swap to cyan via `on-dark` */
+    --color-focus: var(--color-brand-cyan-dark);
+
+    --font-display: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --shadow-lift: 0 -24px 60px -20px color-mix(in oklab, var(--color-brand-navy) 25%, transparent);
+    --shadow-slide: 0 30px 60px -30px color-mix(in oklab, var(--color-black) 60%, transparent);
+
+    /* Instrument Sans is already narrow, so "tight" headings only need a nudge */
+    --tracking-tight: -0.012em;
+
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --default-transition-timing-function: var(--ease-out);
+}
+
+@layer base {
+    html,
+    body {
+        overflow-x: clip;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        html {
+            scroll-behavior: smooth;
+        }
+    }
+
+    body {
+        @apply bg-surface font-sans text-ink antialiased;
+    }
+
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+        font-style: normal;
+        overflow-wrap: anywhere;
+        min-width: 0;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+}
+
+/* Dark panels: brighter focus ring so it still clears 3:1 against navy */
+@utility on-dark {
+    --color-focus: var(--color-brand-cyan);
+}
+
+/* Frosted-glass surface: translucent fill, blurred backdrop, bright top edge highlight. Set --glass-tint (0–1) for opacity */
+@utility glass {
+    background: linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--color-white) calc((var(--glass-tint, 0.55) + 0.15) * 100%), transparent),
+        color-mix(in oklab, var(--color-white) calc(var(--glass-tint, 0.55) * 100%), transparent)
+    );
+    border: 1px solid color-mix(in oklab, var(--color-brand-navy) 9%, transparent);
+    box-shadow:
+        inset 0 1px 0 color-mix(in oklab, var(--color-white) 95%, transparent),
+        inset 0 -1px 1px color-mix(in oklab, var(--color-brand-navy) 4%, transparent),
+        0 2px 6px -2px color-mix(in oklab, var(--color-brand-navy) 6%, transparent),
+        0 12px 32px -14px color-mix(in oklab, var(--color-brand-navy) 22%, transparent);
+    backdrop-filter: blur(18px) saturate(170%);
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+}
